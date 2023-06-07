@@ -9,6 +9,15 @@ const loggerMiddleware = (req, res, next) => {
     next();
 };
 
+const securityLogger = (req, res, next) => {
+    if (req.protocol === "https") {
+      console.log("Secure");
+    } else {
+      console.log("Insecure");
+    }
+    next();
+  };
+
 const privateMiddleware = (req, res, next) => {
     const url = req.url;
     if (url === "/protected") {
@@ -26,11 +35,12 @@ const handleProtect = (req, res) => {
     return res.send("Private Lounge for VIP");
 };
 
-app.use(logger);
+app.use(loggerMiddleware);
+app.use(securityLogger);
 app.use(privateMiddleware);
 app.get("/", handleHome);
 app.get("/protected", handleProtect);
 
-const handleListening = () => console.log(`server listening on port http://localhost:${PORT}`);
+const handleListening = () => console.log(`server listening on port https://localhost:${PORT}`);
 
 app.listen(PORT, handleListening);
